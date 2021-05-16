@@ -16,7 +16,6 @@
  */
 import '@tensorflow/tfjs-backend-webgl';
 import * as bodyPix from '@tensorflow-models/body-pix';
-import dat from 'dat.gui';
 import Stats from 'stats.js';
 import { drawKeypoints, drawSkeleton, toggleLoadingUI, TRY_RESNET_BUTTON_NAME, TRY_RESNET_BUTTON_TEXT, updateTryResNetButtonDatGuiCss } from './demo_util';
 import * as partColorScales from './part_color_scales'; // colorScale : rainbow, warm, spectral (3가지)
@@ -148,16 +147,6 @@ async function loadVideo(cameraLabel) {
   state.video.play(); // 비디오 실행
 }
 
-const defaultQuantBytes = 2;
-
-const defaultMobileNetMultiplier = isMobile() ? 0.50 : 0.75;
-const defaultMobileNetStride = 16;
-const defaultMobileNetInternalResolution = 'medium';
-
-const defaultResNetMultiplier = 1.0;
-const defaultResNetStride = 16;
-const defaultResNetInternalResolution = 'low';
-
 /* GUI 목록 (우측) */
 const guiState = {
   algorithm: 'multi-person-instance',
@@ -197,48 +186,8 @@ const guiState = {
     colorScale: 'rainbow', // rainbow, warm, spectral (3가지 색 표현)
     blurBodyPartAmount: 3, // blurbodyPark일 때만 적용 / 얼마나 blur 처리되는지 (클수록 많이 blur)
     bodyPartEdgeBlurAmount: 3,
-  },
-
-  showFps: !isMobile() // 좌측 상단 fps 표시 여부
+  }
 };
-
-function toCameraOptions(cameras) {
-  const result = { default: null };
-
-  cameras.forEach(camera => {
-    result[camera.label] = camera.label;
-  })
-
-  return result;
-}
-
-/* GUI 컨트롤러 설정 (우측 상단) */
-function setupGui(cameras) {
-  const gui = new dat.GUI({ width: 300 }); // width : 300으로 설정
-
-  let architectureController = null;
-  guiState[TRY_RESNET_BUTTON_NAME] = function () {
-    architectureController.setValue('ResNet50') // reset 버튼을 누르면 Input의 architecture 설정
-  };
-  gui.add(guiState, TRY_RESNET_BUTTON_NAME).name(TRY_RESNET_BUTTON_TEXT); // reset 버튼 html에 등록
-  updateTryResNetButtonDatGuiCss(); // reset 버튼 css 적용
-
-  gui.add(guiState, 'camera', toCameraOptions(cameras)) // 카메라 적용
-    .onChange(async function (cameraLabel) {
-      state.changingCamera = true;
-
-      await loadVideo(cameraLabel);
-
-      state.changingCamera = false;
-    });
-}
-
-/* fps 설정 (값에 따라 달라짐 - 클릭 시 변경) */
-function setupFPS() {
-  stats.showPanel(0); // 0 : fps, 1 : ms, 2 : mb, 3+ : custom
-  if (guiState.showFps)
-    document.body.appendChild(stats.dom);
-}
 
 /* algorithm에 따라 설정 */
 async function estimateSegmentation() {
@@ -313,8 +262,8 @@ function drawPoses(personOrPersonPartSegmentation, flipHorizontally, ctx) {
       drawSkeleton(pose.keypoints, 0.1, ctx);
     })
   }
-  document.getElementById("person-pre").innerHTML = "현재 인원 : "+ personOrPersonPartSegmentation.length
-  document.getElementById("sat-person-pre").innerHTML = "포화도 : " + (personOrPersonPartSegmentation.length / 20)*100 + "%"
+  document.getElementById("person-pre").innerHTML = "현재 인원 : " + personOrPersonPartSegmentation.length
+  document.getElementById("sat-person-pre").innerHTML = "포화도 : " + (personOrPersonPartSegmentation.length / 20) * 100 + "%"
 }
 
 async function loadBodyPix() {
@@ -411,7 +360,6 @@ function segmentBodyInRealTime() {
         break;
     }
 
-    // End monitoring code for frames per second
     stats.end();
 
     requestAnimationFrame(bodySegmentationFrame);
@@ -420,27 +368,16 @@ function segmentBodyInRealTime() {
   bodySegmentationFrame();
 }
 
-/**
- * Kicks off the demo.
- */
 export async function bindPage() {
-  // Load the BodyPix model weights with architecture 0.75
   await loadBodyPix();
   document.getElementById('loading').style.display = 'none';
   document.getElementById('main').style.display = 'inline-block';
 
   await loadVideo(guiState.camera);
 
-  let cameras = await getVideoInputs();
-
-  setupFPS();
-  setupGui(cameras);
-
   segmentBodyInRealTime();
 }
 
-
 navigator.getUserMedia = navigator.getUserMedia ||
   navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-// kick off the demo
 bindPage();
