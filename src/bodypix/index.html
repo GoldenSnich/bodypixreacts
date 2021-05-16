@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>BodyPix - With a Webcam Demo</title>
+  <style>
+    body {
+      margin: 0;
+      width: 100%;
+      background-color: #151515;
+      color: white;
+    }
+
+    #colors {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #colors {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    #colors li {
+      margin: 0;
+    }
+
+    #colors .color {
+      width: 50px;
+      height: 1em;
+    }
+
+    #colors li div {
+      display: inline-block;
+    }
+
+    #title {
+      margin-top: 20px;
+      height: 50px;
+      font-size: 40px;
+      text-align: center;
+      color: #00FFFF;
+    }
+
+    #sub-title {
+      margin-top: 10px;
+      height: 50px;
+      font-size: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    #content {
+      width: 1260px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+
+    #tab-screen1 {
+      margin-top: 10px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      font-weight: bold;
+    }
+
+    #saturation-detection {
+      float: right;
+      margin-top: 10px;
+      margin-right: 90px;
+      width: 170px;
+      color: #00FFFF;
+    }
+
+    #max-person,
+    #person,
+    #saturation {
+      padding: 10px;
+      width: 100%;
+      height: 30px;
+      border: 2px solid #00FFFF;
+      color: #00FFFF;
+      line-height: 0px;
+    }
+
+    #person,
+    #saturation {
+      margin-top: 40px;
+    }
+
+    .spinner-text {
+      float: left;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+</head>
+
+<body>
+  <header>
+    <div id="title">
+      여유 공간
+    </div>
+    <div id="sub-title">
+      방문 지역의 여유 공간 확인 서비스
+    </div>
+  </header>
+  <div id="content">
+    <div id="tab-screen1">
+      <div id='main' style='display:none'>
+        <video id="video" playsinline style="display: none;"></video> <!-- rainbow 적용하지 않은 비디오(기존 비디오) -->
+        <canvas id="output">
+      </div>
+      <div id="saturation-detection">
+        <div id="max-person">
+          <h3 id="max-person-pre">수용 인원 : 20</h3>
+        </div>
+        <div id="person">
+          <h3 id="person-pre"></h3>
+        </div>
+        <div id="saturation">
+          <h3 id="sat-person-pre"></h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="stats"></div>
+  <div id="info" style='display:none'>
+    <!-- 카메라 로드 실패 시 뜸 -->
+  </div>
+  <div id="loading" style='display:flex'>
+    <!-- 로딩 화면 -->
+    <div class="spinner-text">
+      Loading BodyPix model...
+    </div>
+    <div class="sk-spinner sk-spinner-pulse"></div>
+  </div>
+  <ul id="colors" style="display: inline-block"></ul> <!-- 색깔 리스트 -->
+  <script src="index.js"></script>
+</body>
+
+</html>
