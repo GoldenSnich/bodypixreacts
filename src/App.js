@@ -10,6 +10,13 @@ function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
+  var config = {
+    architecture: 'ResNet50',
+    outputStride: 16,
+    quantBytes: 4,
+    multiplier: 1
+  };
+
   const runBodysegment = async () => {
     const net = await bodyPix.load();
     console.log("BodyPix model loaded.");
@@ -46,15 +53,14 @@ function App() {
       // *   - net.segmentMultiPerson
       // *   - net.segmentMultiPersonParts
       // const person = await net.segmentPerson(video);
-      const person = await net.segmentPersonParts(video);
-      console.log(person);
+      const person = await net.segmentMultiPerson(video);
+      console.log(person.length);
 
-      document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.allPoses.length
-      document.getElementById("sat-person-pre").innerHTML = "포화도 : " + person.allPoses.length / 20 * 100 + "%"
-
+      document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
+      document.getElementById("sat-person-pre").innerHTML = "포화도 : " + person.length / 20 * 100 + "%"
 
       // const coloredPartImage = bodyPix.toMask(person);
-      /* const coloredPartImage = bodyPix.toColoredPartMask(person);
+       const coloredPartImage = bodyPix.toColoredPartMask(person);
       const opacity = 0.7;
       const flipHorizontal = false;
       const maskBlurAmount = 0;
@@ -68,7 +74,7 @@ function App() {
         maskBlurAmount,
         flipHorizontal
       );
-      */
+      
     }
   };
 
@@ -85,33 +91,8 @@ function App() {
         <div id="content">
           <div id="tab-screen1">
             <div id='main'>
-              <Webcam
-                ref={webcamRef}
-                style={{
-                  position: "absolute",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  left: 0,
-                  right: 0,
-                  textAlign: "center",
-                  zindex: 9,
-                  width: 640,
-                  height: 480,
-                }}
-              />
-
-              <canvas ref={canvasRef} style={{
-                position: "absolute",
-                marginLeft: "auto",
-                marginRight: "auto",
-                left: 0,
-                right: 0,
-                textAlign: "center",
-                zindex: 9,
-                width: 640,
-                height: 480,
-              }}
-              />
+              <Webcam id="webcam" ref={webcamRef} />
+              <canvas id="canvasCam" ref={canvasRef} />
             </div>
             <div id="saturation-detection">
               <div id="max-person">
