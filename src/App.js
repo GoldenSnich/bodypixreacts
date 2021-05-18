@@ -53,7 +53,7 @@ function App() {
       // *   - net.segmentMultiPerson
       // *   - net.segmentMultiPersonParts
       // const person = await net.segmentPerson(video);
-      
+
       // video 조건
       var setState = {
         flipHorizontal: false,
@@ -71,6 +71,7 @@ function App() {
       console.log(person.length);
       console.log(setState.maxDetections) // 최대 인원수
 
+      document.getElementById("max-person-pre").innerHTML = "수용 인원 : " + setState.maxDetections
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
       document.getElementById("sat-person-pre").innerHTML = "포화도 : " + person.length / setState.maxDetections * 100 + "%"
 
@@ -110,7 +111,7 @@ function App() {
             </div>
             <div id="saturation-detection">
               <div id="max-person">
-                <h3 id="max-person-pre">수용 인원 : 20</h3>
+                <h3 id="max-person-pre"></h3>
               </div>
               <div id="person">
                 <h3 id="person-pre"></h3>
