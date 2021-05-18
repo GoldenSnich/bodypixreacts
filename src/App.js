@@ -53,28 +53,37 @@ function App() {
       // *   - net.segmentMultiPerson
       // *   - net.segmentMultiPersonParts
       // const person = await net.segmentPerson(video);
-      const person = await net.segmentMultiPerson(video);
+      const person = await net.segmentMultiPerson(video, {
+        flipHorizontal: false,
+        internalResolution: 'medium',
+        segmentationThreshold: 0.7,
+        maxDetections: 20,
+        scoreThreshold: 0.2,
+        nmsRadius: 20,
+        minKeypointScore: 0.3,
+        refineSteps: 10
+      });
+      
       console.log(person.length);
 
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
       document.getElementById("sat-person-pre").innerHTML = "포화도 : " + person.length / 20 * 100 + "%"
 
       // const coloredPartImage = bodyPix.toMask(person);
-       const coloredPartImage = bodyPix.toColoredPartMask(person);
-      const opacity = 0.7;
-      const flipHorizontal = false;
-      const maskBlurAmount = 0;
-      const canvas = canvasRef.current;
+      // const coloredPartImage = bodyPix.toColoredPartMask(person);
+      // const opacity = 0.7;
+      // const flipHorizontal = false;
+      // const maskBlurAmount = 0;
+      // const canvas = canvasRef.current;
 
-      bodyPix.drawMask(
-        canvas,
-        video,
-        coloredPartImage,
-        opacity,
-        maskBlurAmount,
-        flipHorizontal
-      );
-      
+      // bodyPix.drawMask(
+      //   canvas,
+      //   video,
+      //   coloredPartImage,
+      //   opacity,
+      //   maskBlurAmount,
+      //   flipHorizontal
+      // );
     }
   };
 
