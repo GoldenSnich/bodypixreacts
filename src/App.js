@@ -53,7 +53,9 @@ function App() {
       // *   - net.segmentMultiPerson
       // *   - net.segmentMultiPersonParts
       // const person = await net.segmentPerson(video);
-      const person = await net.segmentMultiPerson(video, {
+      
+      // video 조건
+      var setState = {
         flipHorizontal: false,
         internalResolution: 'medium',
         segmentationThreshold: 0.7,
@@ -62,12 +64,15 @@ function App() {
         nmsRadius: 20,
         minKeypointScore: 0.3,
         refineSteps: 10
-      });
+      }
+
+      const person = await net.segmentMultiPerson(video, setState); // video에 조건 추가해서 작동
 
       console.log(person.length);
+      console.log(setState.maxDetections) // 최대 인원수
 
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
-      document.getElementById("sat-person-pre").innerHTML = "포화도 : " + person.length / 20 * 100 + "%"
+      document.getElementById("sat-person-pre").innerHTML = "포화도 : " + person.length / setState.maxDetections * 100 + "%"
 
       // const coloredPartImage = bodyPix.toMask(person);
       // const coloredPartImage = bodyPix.toColoredPartMask(person);
