@@ -57,13 +57,13 @@ function App() {
         flipHorizontal: false,
         internalResolution: 'medium',
         segmentationThreshold: 0.7,
-        maxDetections: 20,
+        maxDetections: 20, // 최대 인원수
         scoreThreshold: 0.2,
         nmsRadius: 20,
         minKeypointScore: 0.3,
         refineSteps: 10
       });
-      
+
       console.log(person.length);
 
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
