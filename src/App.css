@@ -59,7 +59,7 @@
   text-align: center;
   z-index: 9;
   width: 640px;
-  height: 480px;
+  height: 360px;
   /* 좌우 반전 */
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
@@ -74,7 +74,7 @@
   text-align: center;
   z-index: 9;
   width: 640px;
-  height: 480px;
+  height: 360px;
   /* 좌우 반전 */
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);

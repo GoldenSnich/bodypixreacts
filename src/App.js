@@ -6,6 +6,9 @@ import Webcam from "react-webcam";
 import GlobaStyles from "./GlobalStyles";
 import "./App.css";
 
+var realWidth = 0;
+var realHeight = 0;
+
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
@@ -13,12 +16,12 @@ function App() {
   var config = {
     architecture: 'ResNet50',
     outputStride: 16,
-    quantBytes: 4,
-    multiplier: 1
+    quantBytes: 4
+    // multiplier: 1
   };
 
   const runBodysegment = async () => {
-    const net = await bodyPix.load();
+    const net = await bodyPix.load(config);
     console.log("BodyPix model loaded.");
     //  Loop and detect hands
     setInterval(() => {
@@ -38,6 +41,9 @@ function App() {
       const videoWidth = webcamRef.current.video.videoWidth;
       const videoHeight = webcamRef.current.video.videoHeight;
 
+      realWidth = videoWidth;
+      realHeight = videoHeight;
+
       // Set video width
       webcamRef.current.video.width = videoWidth;
       webcamRef.current.video.height = videoHeight;
@@ -52,7 +58,7 @@ function App() {
       // *   - net.segmentPersonParts
       // *   - net.segmentMultiPerson
       // *   - net.segmentMultiPersonParts
-      // const person = await net.segmentPerson(video);
+      // const person = await net.segmentPerson(video, setState);
 
       // video 조건
       var setState = {
@@ -66,30 +72,27 @@ function App() {
         refineSteps: 10
       }
 
-      const person = await net.segmentMultiPerson(video, setState); // video에 조건 추가해서 작동
-
-      console.log(person.length);
-      console.log(setState.maxDetections) // 최대 인원수
+      const person = await net.segmentMultiPersonParts(video, setState); // video에 조건 추가해서 작동
 
       document.getElementById("max-person-pre").innerHTML = "수용 인원 : " + setState.maxDetections
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
-      document.getElementById("sat-person-pre").innerHTML = "포화도 : " + person.length / setState.maxDetections * 100 + "%"
+      document.getElementById("sat-person-pre").innerHTML = "포화도 : " + Math.floor(person.length / setState.maxDetections * 100) + "%"
 
       // const coloredPartImage = bodyPix.toMask(person);
-      // const coloredPartImage = bodyPix.toColoredPartMask(person);
-      // const opacity = 0.7;
-      // const flipHorizontal = false;
-      // const maskBlurAmount = 0;
-      // const canvas = canvasRef.current;
+      const coloredPartImage = bodyPix.toColoredPartMask(person);
+      const opacity = 0.7;
+      const flipHorizontal = false;
+      const maskBlurAmount = 0;
+      const canvas = canvasRef.current;
 
-      // bodyPix.drawMask(
-      //   canvas,
-      //   video,
-      //   coloredPartImage,
-      //   opacity,
-      //   maskBlurAmount,
-      //   flipHorizontal
-      // );
+      bodyPix.drawMask(
+        canvas,
+        video,
+        coloredPartImage,
+        opacity,
+        maskBlurAmount,
+        flipHorizontal
+      );
     }
   };
 
