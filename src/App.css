@@ -60,6 +60,7 @@
   z-index: 9;
   width: 640px;
   height: 360px;
+  object-fit: fill;
   /* 좌우 반전 */
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
@@ -75,6 +76,7 @@
   z-index: 9;
   width: 640px;
   height: 360px;
+  object-fit: fill;
   /* 좌우 반전 */
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
