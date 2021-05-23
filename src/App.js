@@ -6,22 +6,25 @@ import Webcam from "react-webcam";
 import GlobaStyles from "./GlobalStyles";
 import "./App.css";
 
-var realWidth = 0;
-var realHeight = 0;
-
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
-  var config = {
+  var mobileNetConfig = {
+    architecture: 'MobileNetV1',
+    outputStride: 8,
+    quantBytes: 4,
+    multiplier: 1
+  }
+
+  var resnetConfig = {
     architecture: 'ResNet50',
     outputStride: 16,
     quantBytes: 4
-    // multiplier: 1
   };
 
   const runBodysegment = async () => {
-    const net = await bodyPix.load(config);
+    const net = await bodyPix.load(resnetConfig);
     console.log("BodyPix model loaded.");
     //  Loop and detect hands
     setInterval(() => {
@@ -40,9 +43,6 @@ function App() {
       const video = webcamRef.current.video;
       const videoWidth = webcamRef.current.video.videoWidth;
       const videoHeight = webcamRef.current.video.videoHeight;
-
-      realWidth = videoWidth;
-      realHeight = videoHeight;
 
       // Set video width
       webcamRef.current.video.width = videoWidth;
@@ -63,7 +63,7 @@ function App() {
       // video 조건
       var setState = {
         flipHorizontal: false,
-        internalResolution: 'medium',
+        internalResolution: 'low',
         segmentationThreshold: 0.7,
         maxDetections: 20, // 최대 인원수
         scoreThreshold: 0.2,
@@ -79,20 +79,20 @@ function App() {
       document.getElementById("sat-person-pre").innerHTML = "포화도 : " + Math.floor(person.length / setState.maxDetections * 100) + "%"
 
       // const coloredPartImage = bodyPix.toMask(person);
-      const coloredPartImage = bodyPix.toColoredPartMask(person);
-      const opacity = 0.7;
-      const flipHorizontal = false;
-      const maskBlurAmount = 0;
-      const canvas = canvasRef.current;
+      // const coloredPartImage = bodyPix.toColoredPartMask(person);
+      // const opacity = 0.7;
+      // const flipHorizontal = false;
+      // const maskBlurAmount = 0;
+      // const canvas = canvasRef.current;
 
-      bodyPix.drawMask(
-        canvas,
-        video,
-        coloredPartImage,
-        opacity,
-        maskBlurAmount,
-        flipHorizontal
-      );
+      // bodyPix.drawMask(
+      //   canvas,
+      //   video,
+      //   coloredPartImage,
+      //   opacity,
+      //   maskBlurAmount,
+      //   flipHorizontal
+      // );
     }
   };
 
