@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 // import logo from './logo.svg';
 import * as tf from "@tensorflow/tfjs";
 import * as bodyPix from "@tensorflow-models/body-pix";
@@ -9,6 +9,8 @@ import "./App.css";
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
+
+  var vh;
 
   var mobileNetConfig = {
     architecture: 'MobileNetV1',
@@ -41,16 +43,25 @@ function App() {
     ) {
       // Get Video Properties
       const video = webcamRef.current.video;
-      const videoWidth = webcamRef.current.video.videoWidth;
-      const videoHeight = webcamRef.current.video.videoHeight;
+      /*
+        const videoWidth = webcamRef.current.video.videoWidth;
+        const videoHeight = webcamRef.current.video.videoHeight;
+      */
 
-      // Set video width
-      webcamRef.current.video.width = videoWidth;
-      webcamRef.current.video.height = videoHeight;
+      if (webcamRef.current.video.videoHeight === 1080)
+        vh = (webcamRef.current.video.videoHeight / 3) + "px";
+      else
+        vh = webcamRef.current.video.videoHeight + "px";
 
-      // Set canvas height and width
-      canvasRef.current.width = videoWidth;
-      canvasRef.current.height = videoHeight;
+      /*
+        // Set video width
+        webcamRef.current.video.width = videoWidth;
+        webcamRef.current.video.height = videoHeight;
+
+        // Set canvas height and width
+        canvasRef.current.width = videoWidth;
+        canvasRef.current.height = videoHeight;
+      */
 
       // Make Detections
       // * One of (see documentation below):
@@ -65,7 +76,7 @@ function App() {
         flipHorizontal: false,
         internalResolution: 'low',
         segmentationThreshold: 0.7,
-        maxDetections: 20, // 최대 인원수
+        maxDetections: 30, // 최대 인원수
         scoreThreshold: 0.2,
         nmsRadius: 20,
         minKeypointScore: 0.3,
@@ -77,6 +88,21 @@ function App() {
       document.getElementById("max-person-pre").innerHTML = "수용 인원 : " + setState.maxDetections
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
       document.getElementById("sat-person-pre").innerHTML = "포화도 : " + Math.floor(person.length / setState.maxDetections * 100) + "%"
+
+      // 포화도에 따른 여유, 적정, 포화 표시
+      if (Math.floor(person.length / setState.maxDetections * 100) <= 30) {
+        document.getElementById("low").style.display = "block";
+        document.getElementById("proper").style.display = "none";
+        document.getElementById("max").style.display = "none";
+      } else if (Math.floor(person.length / setState.maxDetections * 100) <= 70) {
+        document.getElementById("low").style.display = "none";
+        document.getElementById("proper").style.display = "block";
+        document.getElementById("max").style.display = "none";
+      } else {
+        document.getElementById("low").style.display = "none";
+        document.getElementById("proper").style.display = "none";
+        document.getElementById("max").style.display = "block";
+      }
 
       // const coloredPartImage = bodyPix.toMask(person);
       // const coloredPartImage = bodyPix.toColoredPartMask(person);
@@ -102,15 +128,15 @@ function App() {
     <>
       <GlobaStyles />
       <div className="App">
-        <header>
+        <header id="Header">
           <div id="title">여유 공간</div>
           <div id="sub-title">방문 지역의 여유 공간 확인 서비스</div>
         </header>
         <div id="content">
           <div id="tab-screen1">
             <div id='main'>
-              <Webcam id="webcam" ref={webcamRef} />
-              <canvas id="canvasCam" ref={canvasRef} />
+              <Webcam id="webcam" ref={webcamRef} style={{ width: "640px", height: vh }} />
+              <canvas id="canvasCam" ref={canvasRef} style={{ width: "640px", height: vh }} />
             </div>
             <div id="saturation-detection">
               <div id="max-person">
@@ -122,6 +148,18 @@ function App() {
               <div id="saturation">
                 <h3 id="sat-person-pre"></h3>
               </div>
+            </div>
+          </div>
+
+          <div id="present_max">
+            <div id="low">
+              <h3 id="low_txt">여유</h3>
+            </div>
+            <div id="proper">
+              <h3 id="proper_txt">적정</h3>
+            </div>
+            <div id="max">
+              <h3 id="max_txt">포화</h3>
             </div>
           </div>
         </div>
