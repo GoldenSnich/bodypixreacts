@@ -25,6 +25,18 @@ function App() {
     quantBytes: 4
   };
 
+  // video 조건
+  var setState = {
+    flipHorizontal: false,
+    internalResolution: 'low',
+    segmentationThreshold: 0.7,
+    maxDetections: 30, // 최대 인원수
+    scoreThreshold: 0.2,
+    nmsRadius: 20,
+    minKeypointScore: 0.3,
+    refineSteps: 10
+  }
+
   const runBodysegment = async () => {
     const net = await bodyPix.load(resnetConfig);
     console.log("BodyPix model loaded.");
@@ -35,53 +47,20 @@ function App() {
   };
 
   const detect = async (net) => {
-    // Check data is available
-    if (
-      typeof webcamRef.current !== "undefined" &&
+    // video 감지
+    if (typeof webcamRef.current !== "undefined" &&
       webcamRef.current !== null &&
       webcamRef.current.video.readyState === 4
     ) {
-      // Get Video Properties
-      const video = webcamRef.current.video;
-      /*
-        const videoWidth = webcamRef.current.video.videoWidth;
-        const videoHeight = webcamRef.current.video.videoHeight;
-      */
+      const video = webcamRef.current.video; // 현재 video
 
+      // 높이 지정
       if (webcamRef.current.video.videoHeight === 1080)
         vh = (webcamRef.current.video.videoHeight / 3) + "px";
       else
         vh = webcamRef.current.video.videoHeight + "px";
 
-      /*
-        // Set video width
-        webcamRef.current.video.width = videoWidth;
-        webcamRef.current.video.height = videoHeight;
-
-        // Set canvas height and width
-        canvasRef.current.width = videoWidth;
-        canvasRef.current.height = videoHeight;
-      */
-
-      // Make Detections
-      // * One of (see documentation below):
-      // *   - net.segmentPerson
-      // *   - net.segmentPersonParts
-      // *   - net.segmentMultiPerson
-      // *   - net.segmentMultiPersonParts
       // const person = await net.segmentPerson(video, setState);
-
-      // video 조건
-      var setState = {
-        flipHorizontal: false,
-        internalResolution: 'low',
-        segmentationThreshold: 0.7,
-        maxDetections: 30, // 최대 인원수
-        scoreThreshold: 0.2,
-        nmsRadius: 20,
-        minKeypointScore: 0.3,
-        refineSteps: 10
-      }
 
       const person = await net.segmentMultiPersonParts(video, setState); // video에 조건 추가해서 작동
 
