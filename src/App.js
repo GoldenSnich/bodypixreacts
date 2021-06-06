@@ -17,7 +17,7 @@ const App = ({
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
-  var vh, max;
+  var vh
 
   var mobileNetConfig = {
     architecture: 'MobileNetV1',
@@ -61,11 +61,14 @@ const App = ({
     ) {
       const video = webcamRef.current.video; // 현재 video
 
-      // 높이 지정
-      if (webcamRef.current.video.videoHeight === 1080)
+      // 높이 및 margin-bottom 지정
+      if (webcamRef.current.video.videoHeight === 1080) { // 웹 캠
         vh = (webcamRef.current.video.videoHeight / 3) + "px";
-      else
+        document.getElementById("tab_screen").style.marginBottom = '0';
+      } else { // obs 화면
         vh = webcamRef.current.video.videoHeight + "px";
+        document.getElementById("tab_screen").style.marginBottom = '120px';
+      }
 
       // const person = await net.segmentPerson(video, setState);
 
