@@ -109,9 +109,9 @@ const App = ({
           bookmark: true,
           bookmarkSetting: true,
           pinfo: `${storeInfo}`,
-          pmaxNum: `${max_per}`,
+          pmaxNum: Number.parseInt(max_per),
           pname: `${storeName}`,
-          pnum: `${now_per}`,
+          pnum: Number.parseInt(now_per),
           pside: `${outdoor}`
         });
         console.log("Data send");
