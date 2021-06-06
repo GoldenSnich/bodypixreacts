@@ -4,6 +4,7 @@ import * as tf from "@tensorflow/tfjs";
 import * as bodyPix from "@tensorflow-models/body-pix";
 import Webcam from "react-webcam";
 import GlobaStyles from "./GlobalStyles";
+import fire from './firebase'
 import "./App.css";
 import PropTypes, { array } from "prop-types";
 
@@ -47,9 +48,9 @@ const App = ({
   const runBodysegment = async () => {
     const net = await bodyPix.load(resnetConfig);
     console.log("BodyPix model loaded.");
-    //  Loop and detect hands
     setInterval(() => {
       detect(net);
+      sendDatato();
     }, 1000);
   };
 
@@ -119,6 +120,18 @@ const App = ({
       // );
     }
   };
+
+  const sendDatato = async() => {
+    fire.database().ref('PlaceDB/Place/스타벅스 건대입구').set({
+      bookmark: true,
+      bookmarkSetting: true,
+      pinfo: "스타벅스 건대입구 정보",
+      pmaxNum: 20,
+      pname: "스타벅스 건대입구",
+      pnum: 5
+    });
+    console.log("Data send");
+  }
 
   runBodysegment();
 
