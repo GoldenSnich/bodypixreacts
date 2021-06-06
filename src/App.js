@@ -121,7 +121,7 @@ const App = ({
     }
   };
 
-  const sendDatato = async() => {
+  const sendDatato = async () => {
     fire.database().ref('PlaceDB/Place/스타벅스 건대입구').set({
       bookmark: true,
       bookmarkSetting: true,
