@@ -10,6 +10,7 @@ import PropTypes, { array } from "prop-types";
 const App = ({
   outdoor,
   max_per,
+  now_per,
   storeInfo,
   storeName
 }) => {
@@ -74,21 +75,21 @@ const App = ({
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
       document.getElementById("sat-person-pre").innerHTML = "포화도 : " + Math.floor(person.length / setState.maxDetections * 100) + "%"
 
-      max = Math.floor(person.length / setState.maxDetections * 100) // 현재 인원 / 최대 인원
+      now_per = Math.floor(person.length / setState.maxDetections * 100) // 현재 인원 / 최대 인원
 
       outdoor = document.getElementById("outdoor").value; // 실내, 실외
       max_per = document.getElementById("max_person").value; // 최대 인원
       storeName = document.getElementById("store_name").value; // 가게 이름
       storeInfo = document.getElementById("store_info").value; // 가게 정보
 
-      console.log(outdoor + " " + max_per + " " + storeName + " " + storeInfo);
+      console.log(outdoor + " " + max_per + " " + now_per + " " + storeName + " " + storeInfo);
 
       // 포화도에 따른 여유, 적정, 포화 표시
-      if (max <= 30) {
+      if (now_per <= 30) {
         document.getElementById("low").style.display = "block";
         document.getElementById("proper").style.display = "none";
         document.getElementById("max").style.display = "none";
-      } else if (max <= 70) {
+      } else if (now_per <= 70) {
         document.getElementById("low").style.display = "none";
         document.getElementById("proper").style.display = "block";
         document.getElementById("max").style.display = "none";
