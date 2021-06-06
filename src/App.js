@@ -18,7 +18,7 @@ const App = ({
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
-  var vh, max;
+  var vh
 
   var isEnrol = false;
 
