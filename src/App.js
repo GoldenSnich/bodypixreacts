@@ -6,16 +6,17 @@ import Webcam from "react-webcam";
 import GlobaStyles from "./GlobalStyles";
 import "./App.css";
 import PropTypes, { array } from "prop-types";
-import axios from "axios";
 
 const App = ({
-  per,
-  max
+  outdoor,
+  max_per,
+  storeInfo,
+  storeName
 }) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
-  var vh;
+  var vh, max;
 
   var mobileNetConfig = {
     architecture: 'MobileNetV1',
@@ -73,8 +74,14 @@ const App = ({
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
       document.getElementById("sat-person-pre").innerHTML = "포화도 : " + Math.floor(person.length / setState.maxDetections * 100) + "%"
 
-      per = person.length
-      max = Math.floor(person.length / setState.maxDetections * 100)
+      max = Math.floor(person.length / setState.maxDetections * 100) // 현재 인원 / 최대 인원
+
+      outdoor = document.getElementById("outdoor").value; // 실내, 실외
+      max_per = document.getElementById("max_person").value; // 최대 인원
+      storeName = document.getElementById("store_name").value; // 가게 이름
+      storeInfo = document.getElementById("store_info").value; // 가게 정보
+
+      console.log(outdoor + " " + max_per + " " + storeName + " " + storeInfo);
 
       // 포화도에 따른 여유, 적정, 포화 표시
       if (max <= 30) {
@@ -90,28 +97,6 @@ const App = ({
         document.getElementById("proper").style.display = "none";
         document.getElementById("max").style.display = "block";
       }
-
-      console.log(max);
-      console.log(per);
-
-      // url 수정
-      await axios.post("http://localhost:3302/data", {
-        // id:this.state.userid,
-        per: per,
-        max: max,
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            // console.log(response);
-            console.log(response.data);
-            // console.log(response.status);
-          } else {
-            console.log("no");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
 
       // const coloredPartImage = bodyPix.toMask(person);
       // const coloredPartImage = bodyPix.toColoredPartMask(person);
@@ -142,7 +127,7 @@ const App = ({
           <div id="sub-title">방문 지역의 여유 공간 확인 서비스</div>
         </header>
         <div id="content">
-          <div id="tab-screen1">
+          <div id="tab_screen">
             <div id='main'>
               <Webcam id="webcam" ref={webcamRef} style={{ width: "640px", height: vh }} />
               <canvas id="canvasCam" ref={canvasRef} style={{ width: "640px", height: vh }} />
@@ -157,35 +142,40 @@ const App = ({
               <div id="saturation">
                 <p id="sat-person-pre"></p>
               </div>
-              <div id="text_input">
-                <div>
-                  <p>최대 인원 : </p>
-                  <input type="text" id="max_person" name="max" />
+              <div id="present_max">
+                <div id="low">
+                  <h3 id="low_txt">여유</h3>
                 </div>
-                <div>
-                  <p>가게 정보 : </p>
-                  <input type="text" id="store_info" name="store" />
+                <div id="proper">
+                  <h3 id="proper_txt">적정</h3>
                 </div>
-                <div>
-                  <p>가게 이름 : </p>
-                  <input type="text" id="store_name" name="storeName" />
+                <div id="max">
+                  <h3 id="max_txt">포화</h3>
                 </div>
-                <button>등록</button>
               </div>
             </div>
           </div>
-
-          <div id="present_max">
-            <div id="low">
-              <h3 id="low_txt">여유</h3>
+          <div id="text_input">
+            <div id="other_div">
+              <div>
+                <p>실내/실외 : </p>
+                <input type="text" id="outdoor" name="outdoor" placeholder="ex) 실내" />
+              </div>
+              <div>
+                <p>최대 인원 : </p>
+                <input type="text" id="max_person" name="max" placeholder="ex) 30" />
+              </div>
+              <div>
+                <p>가게 이름 : </p>
+                <input type="text" id="store_name" name="storeName" placeholder="ex) 스타벅스" />
+              </div>
             </div>
-            <div id="proper">
-              <h3 id="proper_txt">적정</h3>
-            </div>
-            <div id="max">
-              <h3 id="max_txt">포화</h3>
+            <div id="store_div">
+              <p>가게 정보</p>
+              <textarea id="store_info" name="store" placeholder="ex) 주소, 정보 등" />
             </div>
           </div>
+          <button>등록</button>
         </div>
       </div>
     </>
@@ -193,8 +183,10 @@ const App = ({
 }
 
 App.propTypes = {
-  per: PropTypes.string,
-  max: PropTypes.string
+  outdoor: PropTypes.string,
+  max_per: PropTypes.number,
+  storeInfo: PropTypes.string,
+  storeName: PropTypes.string
 }
 
 export default App;
