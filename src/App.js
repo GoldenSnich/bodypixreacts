@@ -20,6 +20,8 @@ const App = ({
 
   var vh, max;
 
+  var isEnrol = false;
+
   var mobileNetConfig = {
     architecture: 'MobileNetV1',
     outputStride: 8,
@@ -50,7 +52,7 @@ const App = ({
     console.log("BodyPix model loaded.");
     setInterval(() => {
       detect(net);
-      sendDatato();
+      // sendDataToDB();
     }, 1000);
   };
 
@@ -61,12 +63,14 @@ const App = ({
       webcamRef.current.video.readyState === 4
     ) {
       const video = webcamRef.current.video; // 현재 video
-
-      // 높이 지정
-      if (webcamRef.current.video.videoHeight === 1080)
+      // 높이 및 margin-bottom 지정
+      if (webcamRef.current.video.videoHeight === 1080) { // 웹 캠
         vh = (webcamRef.current.video.videoHeight / 3) + "px";
-      else
+        document.getElementById("tab_screen").style.marginBottom = '0';
+      } else { // obs 화면
         vh = webcamRef.current.video.videoHeight + "px";
+        document.getElementById("tab_screen").style.marginBottom = '120px';
+      }
 
       // const person = await net.segmentPerson(video, setState);
 
@@ -75,15 +79,6 @@ const App = ({
       document.getElementById("max-person-pre").innerHTML = "수용 인원 : " + setState.maxDetections
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
       document.getElementById("sat-person-pre").innerHTML = "포화도 : " + Math.floor(person.length / setState.maxDetections * 100) + "%"
-
-      now_per = Math.floor(person.length / setState.maxDetections * 100) // 현재 인원 / 최대 인원
-
-      outdoor = document.getElementById("outdoor").value; // 실내, 실외
-      max_per = document.getElementById("max_person").value; // 최대 인원
-      storeName = document.getElementById("store_name").value; // 가게 이름
-      storeInfo = document.getElementById("store_info").value; // 가게 정보
-
-      console.log(outdoor + " " + max_per + " " + now_per + " " + storeName + " " + storeInfo);
 
       // 포화도에 따른 여유, 적정, 포화 표시
       if (now_per <= 30) {
@@ -99,6 +94,29 @@ const App = ({
         document.getElementById("proper").style.display = "none";
         document.getElementById("max").style.display = "block";
       }
+
+      now_per = person.length;
+      outdoor = document.getElementById("outdoor").value; // 실내, 실외
+      max_per = document.getElementById("max_person").value; // 최대 인원
+      storeName = document.getElementById("store_name").value; // 가게 이름
+      storeInfo = document.getElementById("store_info").value; // 가게 정보
+
+      // console.log(outdoor + " " + max_per + " " + now_per + " " + storeName + " " + storeInfo);
+
+      if (isEnrol) {
+        console.log(`${storeInfo}` + " " + `${max_per}` + " " + `${storeName}` + " " + `${now_per}` + " " + `${outdoor}`);
+        fire.database().ref(`PlaceDB/Place/${storeName}`).set({
+          bookmark: true,
+          bookmarkSetting: true,
+          pinfo: `${storeInfo}`,
+          pmaxNum: `${max_per}`,
+          pname: `${storeName}`,
+          pnum: `${now_per}`,
+          pside: `${outdoor}`
+        });
+        console.log("Data send");
+      }
+
 
       // const coloredPartImage = bodyPix.toMask(person);
       // const coloredPartImage = bodyPix.toColoredPartMask(person);
@@ -118,16 +136,8 @@ const App = ({
     }
   };
 
-  const sendDatato = async() => {
-    fire.database().ref('PlaceDB/Place/스타벅스 건대입구').set({
-      bookmark: true,
-      bookmarkSetting: true,
-      pinfo: "스타벅스 건대입구 정보",
-      pmaxNum: 20,
-      pname: "스타벅스 건대입구",
-      pnum: 5
-    });
-    console.log("Data send");
+  const sendDataToDB = async () => {
+    isEnrol = true;
   }
 
   runBodysegment();
@@ -189,7 +199,7 @@ const App = ({
               <textarea id="store_info" name="store" placeholder="ex) 주소, 정보 등" />
             </div>
           </div>
-          <button>등록</button>
+          <button onClick={sendDataToDB}>등록</button>
         </div>
       </div>
     </>
