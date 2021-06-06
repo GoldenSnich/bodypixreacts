@@ -25,20 +25,19 @@
 
 #tab-screen1 {
   display: flex;
-  margin-bottom: 110px;
   text-align: center;
   font-weight: bold;
   justify-content: flex-end;
 }
 
 #saturation-detection {
-  width: 200px;
+  width: 220px;
   font-size: 20px;
   color: #00FFFF;
 }
 
 #max-person, #person, #saturation {
-  width: 100%;
+  width: 196px;
   height: 50px;
   padding: 10px;
   border: 2px solid #00FFFF;
@@ -46,8 +45,28 @@
   line-height: 50px;
 }
 
-#person, #saturation {
+#person, #saturation, #text_input {
   margin-top: 40px;
+}
+
+#text_input {
+  font-size: 16px;
+}
+
+#text_input div {
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+#text_input p {
+  float: left;
+}
+
+#text_input input {
+  margin-left: 10px;
+  width: 120px;
+  height: 18px;
+  float: left;
 }
 
 #webcam {

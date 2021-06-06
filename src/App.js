@@ -5,8 +5,13 @@ import * as bodyPix from "@tensorflow-models/body-pix";
 import Webcam from "react-webcam";
 import GlobaStyles from "./GlobalStyles";
 import "./App.css";
+import PropTypes, { array } from "prop-types";
+import axios from "axios";
 
-function App() {
+const App = ({
+  per,
+  max
+}) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -68,12 +73,15 @@ function App() {
       document.getElementById("person-pre").innerHTML = "현재 인원 : " + person.length
       document.getElementById("sat-person-pre").innerHTML = "포화도 : " + Math.floor(person.length / setState.maxDetections * 100) + "%"
 
+      per = person.length
+      max = Math.floor(person.length / setState.maxDetections * 100)
+
       // 포화도에 따른 여유, 적정, 포화 표시
-      if (Math.floor(person.length / setState.maxDetections * 100) <= 30) {
+      if (max <= 30) {
         document.getElementById("low").style.display = "block";
         document.getElementById("proper").style.display = "none";
         document.getElementById("max").style.display = "none";
-      } else if (Math.floor(person.length / setState.maxDetections * 100) <= 70) {
+      } else if (max <= 70) {
         document.getElementById("low").style.display = "none";
         document.getElementById("proper").style.display = "block";
         document.getElementById("max").style.display = "none";
@@ -82,6 +90,28 @@ function App() {
         document.getElementById("proper").style.display = "none";
         document.getElementById("max").style.display = "block";
       }
+
+      console.log(max);
+      console.log(per);
+
+      // url 수정
+      await axios.post("http://localhost:3302/data", {
+        // id:this.state.userid,
+        per: per,
+        max: max,
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            // console.log(response);
+            console.log(response.data);
+            // console.log(response.status);
+          } else {
+            console.log("no");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
       // const coloredPartImage = bodyPix.toMask(person);
       // const coloredPartImage = bodyPix.toColoredPartMask(person);
@@ -119,13 +149,28 @@ function App() {
             </div>
             <div id="saturation-detection">
               <div id="max-person">
-                <h3 id="max-person-pre"></h3>
+                <p id="max-person-pre"></p>
               </div>
               <div id="person">
-                <h3 id="person-pre"></h3>
+                <p id="person-pre"></p>
               </div>
               <div id="saturation">
-                <h3 id="sat-person-pre"></h3>
+                <p id="sat-person-pre"></p>
+              </div>
+              <div id="text_input">
+                <div>
+                  <p>최대 인원 : </p>
+                  <input type="text" id="max_person" name="max" />
+                </div>
+                <div>
+                  <p>가게 정보 : </p>
+                  <input type="text" id="store_info" name="store" />
+                </div>
+                <div>
+                  <p>가게 이름 : </p>
+                  <input type="text" id="store_name" name="storeName" />
+                </div>
+                <button>등록</button>
               </div>
             </div>
           </div>
@@ -145,6 +190,11 @@ function App() {
       </div>
     </>
   );
+}
+
+App.propTypes = {
+  per: PropTypes.string,
+  max: PropTypes.string
 }
 
 export default App;
