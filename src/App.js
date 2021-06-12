@@ -36,7 +36,7 @@ const App = ({
   // video 조건
   var setState = {
     flipHorizontal: false,
-    internalResolution: 'low',
+    internalResolution: 'high',
     segmentationThreshold: 0.7,
     maxDetections: 30, // 최대 인원수
     scoreThreshold: 0.2,
