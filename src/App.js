@@ -33,7 +33,7 @@ const App = ({
     architecture: 'ResNet50',
     outputStride: 16,
     quantBytes: 4
-  };
+  }; 
 
   // video 조건
   var setState = {
